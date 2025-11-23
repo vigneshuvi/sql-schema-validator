@@ -1,0 +1,55 @@
+name: DB - SQL Validator | Generate the GitHub Pages(/docs)
+on:
+  workflow_dispatch:
+  pull_request:
+    paths:
+      - "database-scripts/*.sql"
+  push:
+    branches:
+      - main
+    paths:
+      - "database-scripts/*.sql"
+
+jobs:
+  generate-schema-diagrams:
+    runs-on: <MENTION YOUR RUNNER HERA>
+    
+    steps:
+    # Checkout repository
+    - name: Checkout repository
+      uses: actions/checkout@v4
+
+    # Get current branch information
+    - name: Get Branch Info
+      id: branch
+      run: | 
+        BRANCH_NAME="${GITHUB_HEAD_REF:-${GITHUB_REF_NAME}}"
+        echo "🚀 Working on branch: $BRANCH_NAME"
+        echo "branch_name=$BRANCH_NAME" >> $GITHUB_OUTPUT
+      
+    # Set up Python 3
+    - name: Set up Python 3
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.x"
+    
+    # Display Python version
+    - name: Display Python version
+      run: python --version
+
+    # Generate HTML Documentation
+    - name: Generate HTML Documentation
+      run: |
+        echo "🔨 Generating HTML documentation from SQL files..."
+        cd scripts
+        python3 generate_html.py
+        cd ..
+    
+    # Commit and push generated documentation
+    - name: Commit Generated Documentation
+      run: |
+        git config --local user.email "action@github.com"
+        git config --local user.name "Vigneshuvi"
+        git add docs/index.html
+        git commit -m "Auto-generate SQL documentation [skip ci]" || echo "No changes to commit"
+        git push || echo "Nothing to push"

@@ -1,0 +1,1059 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SQL Schema Validation -  Overview</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Helvetica', 'Arial', sans-serif;
+            line-height: 1.6;
+            color: #24292e;
+            background-color: #f6f8fa;
+        }
+
+        .container {
+            max-width: 1280px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px 0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+        }
+
+        header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .nav-tab {
+            padding: 12px 24px;
+            background: white;
+            border: 2px solid #e1e4e8;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        .nav-tab:hover {
+            border-color: #667eea;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(102, 126, 234, 0.2);
+        }
+
+        .nav-tab.active {
+            background: #667eea;
+            color: white;
+            border-color: #667eea;
+        }
+
+        .tab-content {
+            display: none;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .tab-content.active {
+            display: block;
+        }
+
+        .sql-info {
+            padding: 20px;
+            background: #f6f8fa;
+            border-bottom: 2px solid #e1e4e8;
+        }
+
+        .sql-info h2 {
+            color: #667eea;
+            margin-bottom: 10px;
+        }
+
+        .sql-info .stats {
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            margin-top: 15px;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stat-item .label {
+            font-weight: 600;
+            color: #586069;
+        }
+
+        .stat-item .value {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.9em;
+        }
+
+        .sql-code {
+            padding: 0;
+            position: relative;
+        }
+
+        .code-header {
+            background: #2d3748;
+            color: white;
+            padding: 12px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .code-header .filename {
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .copy-btn {
+            background: #667eea;
+            color: white;
+            border: none;
+            padding: 6px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 12px;
+            transition: background 0.3s ease;
+        }
+
+        .copy-btn:hover {
+            background: #5568d3;
+        }
+
+        .copy-btn.copied {
+            background: #48bb78;
+        }
+
+        pre {
+            margin: 0;
+            padding: 20px;
+            overflow-x: auto;
+            background: #1e1e1e;
+            color: #d4d4d4;
+            font-family: 'Monaco', 'Courier New', monospace;
+            font-size: 13px;
+            line-height: 1.5;
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .search-container {
+            margin-bottom: 20px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        .search-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e4e8;
+            border-radius: 6px;
+            font-size: 14px;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        footer {
+            text-align: center;
+            padding: 30px;
+            color: #586069;
+            margin-top: 40px;
+        }
+
+        .info-banner {
+            background: #e7f3ff;
+            border-left: 4px solid #0366d6;
+            padding: 15px;
+            margin-bottom: 20px;
+            border-radius: 6px;
+        }
+
+        .info-banner p {
+            color: #0366d6;
+            margin: 0;
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 1.8em;
+            }
+            
+            .nav-tabs {
+                flex-direction: column;
+            }
+            
+            .nav-tab {
+                width: 100%;
+            }
+
+            pre {
+                font-size: 11px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <h1>📊 </h1>
+            <p>Sample  - Database Schema Documentation</p>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="info-banner">
+            <p>🤖 This documentation was automatically generated from SQL files on November 23, 2025 at 15:11</p>
+        </div>
+
+        <div class="search-container">
+            <input type="text" class="search-input" id="searchInput" placeholder="🔍 Search across all SQL files...">
+        </div>
+
+        <div class="nav-tabs">
+            <button class="nav-tab active" onclick="showTab('overview')">Overview</button><button class="nav-tab" onclick="showTab('mf_modernization_demo')">mf_modernization_demo Database</button><button class="nav-tab" onclick="showTab('legacy_modernization')">legacy_modernization Database</button>
+        </div>
+
+        
+        <div id="overview-tab" class="tab-content active">
+            <div class="sql-info">
+                <h2>📋 Database Migration Overview</h2>
+                <p style="margin-top: 10px; color: #586069;">This documentation contains the complete database schema for 2 database(s) in the Sample Project.</p>
+                
+                <div style="margin-top: 30px;">
+                    <h3 style="margin-bottom: 15px; color: #24292e;">Database Summary</h3>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-top: 20px;">
+                        
+                        <div style="padding: 20px; background: #f0f7ff; border-left: 4px solid #0366d6; border-radius: 6px;">
+                            <h4 style="color: #0366d6; margin-bottom: 10px;">mf_modernization_demo Database</h4>
+                            <p style="font-size: 14px; color: #586069;">sample_100_tables_with_anomalies.sql - Database schema definition</p>
+                            <div style="margin-top: 15px;">
+                                <span class="stat-item"><span class="label">Tables:</span> <span class="value">51</span></span>
+                                <span class="stat-item" style="margin-left: 15px;"><span class="label">Lines:</span> <span class="value">319</span></span>
+                                <span class="stat-item" style="margin-left: 15px;"><span class="label">Size:</span> <span class="value">5.21 KB</span></span>
+                            </div>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(0,0,0,0.1);">
+                                <span class="stat-item">
+                                    <span class="label">⚠️ Anomalies:</span> 
+                                    <span class="value" style="background: #dc3545;">161</span>
+                                </span>
+                            </div>
+                        </div>
+        
+                        <div style="padding: 20px; background: #f0fff4; border-left: 4px solid #28a745; border-radius: 6px;">
+                            <h4 style="color: #28a745; margin-bottom: 10px;">legacy_modernization Database</h4>
+                            <p style="font-size: 14px; color: #586069;">sample_schema.sql - Database schema definition</p>
+                            <div style="margin-top: 15px;">
+                                <span class="stat-item"><span class="label">Tables:</span> <span class="value">30</span></span>
+                                <span class="stat-item" style="margin-left: 15px;"><span class="label">Lines:</span> <span class="value">225</span></span>
+                                <span class="stat-item" style="margin-left: 15px;"><span class="label">Size:</span> <span class="value">3.7 KB</span></span>
+                            </div>
+                            <div style="margin-top: 15px; padding-top: 15px; border-top: 1px solid rgba(0,0,0,0.1);">
+                                <span class="stat-item">
+                                    <span class="label">⚠️ Anomalies:</span> 
+                                    <span class="value" style="background: #dc3545;">68</span>
+                                </span>
+                            </div>
+                        </div>
+        
+                    </div>
+                </div>
+
+                <div style="margin-top: 30px; padding: 20px; background: #fff5f5; border-left: 4px solid #dc3545; border-radius: 6px;">
+                    <h3 style="color: #dc3545; margin-bottom: 15px;">⚠️ Schema Anomalies Detected</h3>
+                    <p style="color: #586069; margin-bottom: 15px;">The following potential issues were detected in the database schemas:</p>
+                    <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 15px;">
+                        <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #e1e4e8;">
+                            <div style="font-weight: 600; color: #dc3545; margin-bottom: 5px;">Tables Without Primary Keys</div>
+                            <div style="font-size: 24px; font-weight: bold; color: #24292e;">54</div>
+                        </div>
+                        <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #e1e4e8;">
+                            <div style="font-weight: 600; color: #f59e0b; margin-bottom: 5px;">Tables Without Indexes</div>
+                            <div style="font-size: 24px; font-weight: bold; color: #24292e;">81</div>
+                        </div>
+                        <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #e1e4e8;">
+                            <div style="font-weight: 600; color: #0366d6; margin-bottom: 5px;">Single Column Tables</div>
+                            <div style="font-size: 24px; font-weight: bold; color: #24292e;">38</div>
+                        </div>
+                        <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #e1e4e8;">
+                            <div style="font-weight: 600; color: #9333ea; margin-bottom: 5px;">Potential Missing Foreign Keys</div>
+                            <div style="font-size: 24px; font-weight: bold; color: #24292e;">2</div>
+                        </div>
+                        <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #e1e4e8;">
+                            <div style="font-weight: 600; color: #f59e0b; margin-bottom: 5px;">Long Table Names (&gt;30 chars)</div>
+                            <div style="font-size: 24px; font-weight: bold; color: #24292e;">2</div>
+                        </div>
+                        <div style="padding: 15px; background: white; border-radius: 6px; border: 1px solid #e1e4e8;">
+                            <div style="font-weight: 600; color: #28a745; margin-bottom: 5px;">Nullable Columns</div>
+                            <div style="font-size: 24px; font-weight: bold; color: #24292e;">52</div>
+                        </div>
+                    </div>
+                    <p style="margin-top: 15px; color: #586069; font-size: 14px;">
+                        <strong>Note:</strong> These are potential issues that may require review. Some may be intentional design decisions.
+                    </p>
+                </div>
+
+                <div style="margin-top: 30px; padding: 20px; background: #fffbeb; border-left: 4px solid #f59e0b; border-radius: 6px;">
+                    <h3 style="color: #f59e0b; margin-bottom: 10px;">ℹ️ Information</h3>
+                    <ul style="margin-left: 20px; color: #586069; line-height: 1.8;">
+                        <li>All scripts are in SQL format compatible with DB2/SQL Server</li>
+                        <li>Scripts include table creation, indexes, and foreign key constraints</li>
+                        <li>Generated from mainframe migration process</li>
+                        <li>Click on individual tabs to view complete SQL scripts</li>
+                        <li>Total files: 2</li>
+                        <li>Total tables: 81</li>
+                        <li>Total lines: 544</li>
+                        <li>Total anomalies detected: 229</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+    
+        
+        <div id="mf_modernization_demo-tab" class="tab-content">
+            <div class="sql-info">
+                <h2>mf_modernization_demo Database Schema</h2>
+                <p>Database: mf_modernization_demo</p>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="label">File:</span>
+                        <span class="value">sample_100_tables_with_anomalies.sql</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">Total Lines:</span>
+                        <span class="value">319</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">Tables:</span>
+                        <span class="value">51</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">Size:</span>
+                        <span class="value">5.21 KB</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">Anomalies:</span>
+                        <span class="value" style="background: #dc3545;">161</span>
+                    </div>
+                </div>
+                
+                
+                <div style="margin-top: 20px; padding: 15px; background: #fff5f5; border-left: 4px solid #dc3545; border-radius: 6px;">
+                    <h3 style="color: #dc3545; margin-bottom: 10px; font-size: 16px;">⚠️ Anomaly Breakdown</h3>
+                    <ul style="margin-left: 20px; color: #586069; line-height: 1.8; font-size: 14px;">
+                        <li>Tables without primary key: <strong>51</strong></li>
+                        <li>Tables without indexes: <strong>51</strong></li>
+                        <li>Single column tables: <strong>28</strong></li>
+                        <li>Potential missing foreign keys: <strong>2</strong></li>
+                        <li>Long table names (&gt;30 chars): <strong>2</strong></li>
+                        <li>Nullable columns: <strong>27</strong></li>
+                    </ul>
+                </div>
+                
+            </div>
+            <div class="sql-code">
+                <div class="code-header">
+                    <span class="filename">sample_100_tables_with_anomalies.sql</span>
+                    <button class="copy-btn" onclick="copyCode('mf_modernization_demo-code')">Copy Code</button>
+                </div>
+                <pre id="mf_modernization_demo-code">-- ===========================================================
+-- SAMPLE SQL FILE WITH 100 TABLES + MULTIPLE ANOMALIES
+-- ===========================================================
+
+-- Database
+CREATE DATABASE mf_modernization_demo;
+
+
+------------------------------
+-- 1–20: Missing Primary Keys
+------------------------------
+
+CREATE TABLE customer_data_01 (
+    cust_id INT,
+    name VARCHAR(50),
+    email VARCHAR(100),
+    created_on TIMESTAMP
+);
+
+CREATE TABLE customer_data_02 (
+    id INT,
+    full_name VARCHAR(100),
+    PH_NO VARCHAR(20),
+    address VARCHAR(200)
+);
+
+CREATE TABLE cust_data_singlecol_03 (
+    value VARCHAR(200)
+);
+
+CREATE TABLE cust_data_singlecol_04 (
+    onlycol INT
+);
+
+CREATE TABLE account_table_05 (
+    acc_id INT,
+    balance DECIMAL(10,2),
+    FKY_customer INT,
+    last_txn TIMESTAMP
+);
+
+CREATE TABLE account_table_06 (
+    accno INT,
+    status VARCHAR(20),
+    created TIMESTAMP
+);
+
+CREATE TABLE long_table_name_customer_transaction_history_details_07 (
+    id INT,
+    amount DECIMAL(12,2),
+    description VARCHAR(250),
+    created TIMESTAMP
+);
+
+CREATE TABLE long_table_name_customer_subscription_metadata_reference_list_08 (
+    id INT,
+    info TEXT,
+    updated TIMESTAMP
+);
+
+CREATE TABLE txn_master_09 (
+    txn_id INT,
+    cust_id INT,
+    amount DECIMAL(10,2),
+    txn_date TIMESTAMP
+);
+
+CREATE TABLE txn_master_10 (
+    id INT,
+    value VARCHAR(100)
+);
+
+CREATE TABLE product_data_11 (
+    product_id INT,
+    name VARCHAR(50),
+    category VARCHAR(50),
+    price DECIMAL(10,2)
+);
+
+CREATE TABLE product_data_12 (
+    pid INT,
+    p_name VARCHAR(50),
+    FKY_cat INT
+);
+
+CREATE TABLE product_metadata_13 (
+    meta_id INT,
+    key VARCHAR(50),
+    val VARCHAR(200)
+);
+
+CREATE TABLE warehouse_data_14 (
+    wr_id INT,
+    code VARCHAR(20),
+    state VARCHAR(20)
+);
+
+CREATE TABLE warehouse_location_15 (
+    loc_id INT,
+    wr_id INT,
+    FKY_region INT
+);
+
+CREATE TABLE user_login_16 (
+    login_id INT,
+    user_name VARCHAR(50),
+    passwd VARCHAR(50),
+    last_login TIMESTAMP
+);
+
+CREATE TABLE user_login_17 (
+    id INT,
+    login VARCHAR(50)
+);
+
+CREATE TABLE order_table_18 (
+    order_id INT,
+    cust_id INT,
+    total DECIMAL(12,2),
+    created TIMESTAMP
+);
+
+CREATE TABLE order_table_19 (
+    id INT,
+    description VARCHAR(200)
+);
+
+CREATE TABLE category_table_20 (
+    cat_id INT,
+    cat_name VARCHAR(50)
+);
+
+
+------------------------------
+-- 21–40: Nullable Columns + No Indexes
+------------------------------
+
+CREATE TABLE employee_master_21 (
+    emp_id INT,
+    emp_name VARCHAR(100) NULL,
+    manager_id INT NULL
+);
+
+CREATE TABLE employee_master_22 (
+    id INT,
+    name VARCHAR(50) NULL
+);
+
+CREATE TABLE employee_profile_23 (
+    profile_id INT,
+    emp_id INT,
+    bio TEXT NULL
+);
+
+CREATE TABLE emp_salary_24 (
+    sid INT,
+    emp_id INT,
+    amount DECIMAL(10,2) NULL
+);
+
+CREATE TABLE salary_revision_25 (
+    rev_id INT,
+    emp_id INT,
+    old_amt DECIMAL(10,2) NULL,
+    new_amt DECIMAL(10,2) NULL
+);
+
+CREATE TABLE bonus_table_26 (
+    id INT,
+    emp_id INT,
+    bonus DECIMAL(10,2) NULL
+);
+
+CREATE TABLE dept_table_27 (
+    dept_id INT,
+    dept_name VARCHAR(100) NULL
+);
+
+CREATE TABLE dept_mapping_28 (
+    id INT,
+    dept_id INT,
+    emp_id INT
+);
+
+CREATE TABLE dept_meta_29 (
+    meta_id INT,
+    key VARCHAR(50),
+    val VARCHAR(200) NULL
+);
+
+CREATE TABLE skill_table_30 (
+    skill_id INT,
+    skill_name VARCHAR(100) NULL
+);
+
+CREATE TABLE emp_skill_map_31 (
+    id INT,
+    emp_id INT,
+    skill_id INT
+);
+
+CREATE TABLE region_table_32 (
+    region_id INT,
+    region_name VARCHAR(100) NULL
+);
+
+CREATE TABLE country_table_33 (
+    country_id INT,
+    name VARCHAR(100) NULL
+);
+
+CREATE TABLE state_table_34 (
+    state_id INT,
+    country_id INT,
+    state_name VARCHAR(100) NULL
+);
+
+CREATE TABLE city_table_35 (
+    city_id INT,
+    state_id INT,
+    city_name VARCHAR(100) NULL
+);
+
+CREATE TABLE address_table_36 (
+    addr_id INT,
+    cust_id INT,
+    city_id INT NULL,
+    pin VARCHAR(10) NULL
+);
+
+CREATE TABLE audit_log_37 (
+    log_id INT,
+    event VARCHAR(200) NULL,
+    created TIMESTAMP NULL
+);
+
+CREATE TABLE audit_meta_38 (
+    meta_id INT,
+    log_id INT,
+    info TEXT NULL
+);
+
+CREATE TABLE meta_table_39 (
+    id INT,
+    key VARCHAR(200) NULL
+);
+
+CREATE TABLE shipping_table_40 (
+    ship_id INT,
+    order_id INT,
+    mode VARCHAR(20) NULL
+);
+
+
+------------------------------
+-- 41–60: FK-like names but no FK constraints
+------------------------------
+
+CREATE TABLE shipment_detail_41 (
+    id INT,
+    FKY_ship_id INT,
+    FKY_order INT
+);
+
+CREATE TABLE shipment_detail_42 (
+    id INT,
+    FKY_ship_id INT
+);
+
+CREATE TABLE wallet_table_43 (
+    wid INT,
+    cust_id INT,
+    FKY_topup_id INT
+);
+
+CREATE TABLE wallet_txn_44 (
+    txn_id INT,
+    wid INT,
+    amount DECIMAL(10,2)
+);
+
+CREATE TABLE invoice_table_45 (
+    invoice_id INT,
+    order_id INT,
+    FKY_cust INT
+);
+
+CREATE TABLE invoice_meta_46 (
+    id INT,
+    invoice_id INT,
+    key VARCHAR(100)
+);
+
+CREATE TABLE reconciliation_47 (
+    recon_id INT,
+    order_id INT,
+    amount DECIMAL(10,2)
+);
+
+CREATE TABLE recon_meta_48 (
+    id INT,
+    recon_id INT,
+    detail TEXT
+);
+
+CREATE TABLE sync_table_49 (
+    sync_id INT,
+    ref_id INT,
+    status VARCHAR(20)
+);
+
+CREATE TABLE sync_error_50 (
+    id INT,
+    sync_id INT,
+    err TEXT
+);
+
+CREATE TABLE batch_tab_
+</pre>
+            </div>
+        </div>
+        
+        <div id="legacy_modernization-tab" class="tab-content">
+            <div class="sql-info">
+                <h2>legacy_modernization Database Schema</h2>
+                <p>Database: legacy_modernization</p>
+                <div class="stats">
+                    <div class="stat-item">
+                        <span class="label">File:</span>
+                        <span class="value">sample_schema.sql</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">Total Lines:</span>
+                        <span class="value">225</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">Tables:</span>
+                        <span class="value">30</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">Size:</span>
+                        <span class="value">3.7 KB</span>
+                    </div>
+                    <div class="stat-item">
+                        <span class="label">Anomalies:</span>
+                        <span class="value" style="background: #dc3545;">68</span>
+                    </div>
+                </div>
+                
+                
+                <div style="margin-top: 20px; padding: 15px; background: #fff5f5; border-left: 4px solid #dc3545; border-radius: 6px;">
+                    <h3 style="color: #dc3545; margin-bottom: 10px; font-size: 16px;">⚠️ Anomaly Breakdown</h3>
+                    <ul style="margin-left: 20px; color: #586069; line-height: 1.8; font-size: 14px;">
+                        <li>Tables without primary key: <strong>3</strong></li>
+                        <li>Tables without indexes: <strong>30</strong></li>
+                        <li>Single column tables: <strong>10</strong></li>
+                        <li>Potential missing foreign keys: <strong>0</strong></li>
+                        <li>Long table names (&gt;30 chars): <strong>0</strong></li>
+                        <li>Nullable columns: <strong>25</strong></li>
+                    </ul>
+                </div>
+                
+            </div>
+            <div class="sql-code">
+                <div class="code-header">
+                    <span class="filename">sample_schema.sql</span>
+                    <button class="copy-btn" onclick="copyCode('legacy_modernization-code')">Copy Code</button>
+                </div>
+                <pre id="legacy_modernization-code">CREATE DATABASE legacy_modernization;
+
+-- Table 1
+CREATE TABLE customer (
+    customer_id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    email VARCHAR(150),
+    created_at TIMESTAMP
+);
+
+-- Table 2
+CREATE TABLE address (
+    address_id SERIAL PRIMARY KEY,
+    customer_id INT,
+    line1 VARCHAR(200),
+    city VARCHAR(100),
+    state VARCHAR(50),
+    zip VARCHAR(20)
+);
+
+-- Table 3
+CREATE TABLE orders (
+    order_id SERIAL PRIMARY KEY,
+    customer_id INT,
+    order_date DATE,
+    status VARCHAR(20)
+);
+
+-- Table 4
+CREATE TABLE order_items (
+    item_id SERIAL PRIMARY KEY,
+    order_id INT,
+    product_id INT,
+    quantity INT
+);
+
+-- Table 5
+CREATE TABLE product (
+    product_id SERIAL PRIMARY KEY,
+    name VARCHAR(150),
+    price DECIMAL(10,2),
+    stock INT
+);
+
+-- Table 6
+CREATE TABLE payment (
+    payment_id SERIAL PRIMARY KEY,
+    order_id INT,
+    amount DECIMAL(10,2),
+    payment_date TIMESTAMP
+);
+
+-- Table 7
+CREATE TABLE inventory (
+    inv_id SERIAL PRIMARY KEY,
+    product_id INT,
+    warehouse VARCHAR(50),
+    stock_qty INT
+);
+
+-- Table 8
+CREATE TABLE supplier (
+    supplier_id SERIAL PRIMARY KEY,
+    name VARCHAR(150),
+    contact VARCHAR(100)
+);
+
+-- Table 9
+CREATE TABLE shipment (
+    shipment_id SERIAL PRIMARY KEY,
+    order_id INT,
+    shipped_date DATE,
+    carrier VARCHAR(100)
+);
+
+-- Table 10
+CREATE TABLE category (
+    category_id SERIAL PRIMARY KEY,
+    category_name VARCHAR(100)
+);
+
+-- Table 11
+CREATE TABLE product_category (
+    product_id INT,
+    category_id INT
+);
+
+-- Table 12
+CREATE TABLE employee (
+    emp_id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    role VARCHAR(50)
+);
+
+-- Table 13
+CREATE TABLE department (
+    dept_id SERIAL PRIMARY KEY,
+    name VARCHAR(100)
+);
+
+-- Table 14
+CREATE TABLE emp_dept (
+    emp_id INT,
+    dept_id INT
+);
+
+-- Table 15
+CREATE TABLE audit_log (
+    log_id SERIAL PRIMARY KEY,
+    table_name VARCHAR(100),
+    action VARCHAR(50),
+    created_at TIMESTAMP
+);
+
+-- Table 16
+CREATE TABLE reviews (
+    review_id SERIAL PRIMARY KEY,
+    customer_id INT,
+    product_id INT,
+    rating INT,
+    comments TEXT
+);
+
+-- Table 17
+CREATE TABLE wallet (
+    wallet_id SERIAL PRIMARY KEY,
+    customer_id INT,
+    balance DECIMAL(10,2)
+);
+
+-- Table 18
+CREATE TABLE coupons (
+    coupon_id SERIAL PRIMARY KEY,
+    code VARCHAR(20),
+    discount DECIMAL(5,2)
+);
+
+-- Table 19
+CREATE TABLE coupon_usage (
+    usage_id SERIAL PRIMARY KEY,
+    coupon_id INT,
+    customer_id INT
+);
+
+-- Table 20
+CREATE TABLE logs_raw (
+    log_id SERIAL,
+    details TEXT
+);
+
+-- Table 21
+CREATE TABLE notifications (
+    notif_id SERIAL PRIMARY KEY,
+    customer_id INT,
+    message VARCHAR(255),
+    sent_at TIMESTAMP
+);
+
+-- Table 22
+CREATE TABLE warehouse (
+    warehouse_id SERIAL PRIMARY KEY,
+    location VARCHAR(200)
+);
+
+-- Table 23
+CREATE TABLE warehouse_stock (
+    id SERIAL PRIMARY KEY,
+    warehouse_id INT,
+    product_id INT,
+    qty INT
+);
+
+-- Table 24
+CREATE TABLE tax (
+    tax_id SERIAL PRIMARY KEY,
+    tax_code VARCHAR(20),
+    rate DECIMAL(5,2)
+);
+
+-- Table 25
+CREATE TABLE invoice (
+    invoice_id SERIAL PRIMARY KEY,
+    order_id INT,
+    invoice_date DATE,
+    total DECIMAL(10,2)
+);
+
+-- Table 26
+CREATE TABLE invoice_item (
+    item_id SERIAL PRIMARY KEY,
+    invoice_id INT,
+    product_id INT,
+    price DECIMAL(10,2),
+    quantity INT
+);
+
+-- Table 27
+CREATE TABLE return_request (
+    return_id SERIAL PRIMARY KEY,
+    order_id INT,
+    reason VARCHAR(255)
+);
+
+-- Table 28
+CREATE TABLE return_items (
+    id SERIAL PRIMARY KEY,
+    return_id INT,
+    product_id INT,
+    qty INT
+);
+
+-- Table 29
+CREATE TABLE api_keys (
+    key_id SERIAL PRIMARY KEY,
+    customer_id INT,
+    api_key VARCHAR(255)
+);
+
+-- Table 30
+CREATE TABLE feature_flags (
+    flag_id SERIAL PRIMARY KEY,
+    name VARCHAR(100),
+    enabled BOOLEAN
+);
+</pre>
+            </div>
+        </div>
+        
+    </div>
+
+    <footer>
+        <p>Vigneshuvi Sample -  PostgreSQL Database SQL Scripts</p>
+        <p style="margin-top: 10px; font-size: 0.9em;">Generated: November 2025</p>
+        <p style="margin-top: 5px; font-size: 0.8em; color: #959da5;">
+            Auto-generated by generate_html.py | 2 SQL file(s) processed
+        </p>
+    </footer>
+
+    <script>
+        // Tab switching
+        function showTab(tabName) {
+            // Hide all tabs
+            document.querySelectorAll('.tab-content').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Remove active class from all nav tabs
+            document.querySelectorAll('.nav-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            
+            // Show selected tab
+            document.getElementById(tabName + '-tab').classList.add('active');
+            
+            // Add active class to clicked nav tab
+            event.target.classList.add('active');
+        }
+
+        // Copy code functionality
+        function copyCode(elementId) {
+            const code = document.getElementById(elementId).textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                const btn = event.target;
+                const originalText = btn.textContent;
+                btn.textContent = '✓ Copied!';
+                btn.classList.add('copied');
+                setTimeout(() => {
+                    btn.textContent = originalText;
+                    btn.classList.remove('copied');
+                }, 2000);
+            });
+        }
+
+        // Simple search functionality
+        document.getElementById('searchInput').addEventListener('input', function(e) {
+            const searchTerm = e.target.value.toLowerCase();
+            if (searchTerm.length > 2) {
+                // Search through all pre elements
+                document.querySelectorAll('pre').forEach(pre => {
+                    const content = pre.textContent.toLowerCase();
+                    if (content.includes(searchTerm)) {
+                        // Highlight the parent tab
+                        const tabContent = pre.closest('.tab-content');
+                        if (tabContent && !tabContent.classList.contains('active')) {
+                            console.log('Found in:', tabContent.id);
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
