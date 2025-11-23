@@ -25,7 +25,7 @@ This Python script automatically scans SQL files, analyzes database schemas, det
 Simply run the script in the directory containing your SQL files:
 
 ```bash
-python3 validate_schema_generate_html.py
+python3 validate_schema_validate_schema_generate_html.py
 ```
 
 The script will:
@@ -60,7 +60,7 @@ After running the script, you'll get:
 Whenever you add, remove, or modify SQL files:
 
 ```bash
-python3 generate_html.py
+python3 validate_schema_generate_html.py
 ```
 
 The script will regenerate the entire documentation based on current SQL files.
@@ -74,7 +74,7 @@ The script will regenerate the entire documentation based on current SQL files.
 
 1. **Add files to your repository**:
    ```bash
-   git add index.html generate_html.py
+   git add index.html validate_schema_generate_html.py
    git commit -m "Add SQL documentation"
    git push
    ```
@@ -194,7 +194,7 @@ jobs:
       - name: Generate Documentation
         run: |
           cd database-scripts
-          python3 generate_html.py
+          python3 validate_schema_generate_html.py
       
       - name: Commit Changes
         run: |

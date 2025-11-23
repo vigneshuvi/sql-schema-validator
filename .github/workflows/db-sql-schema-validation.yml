@@ -42,7 +42,7 @@ jobs:
       run: |
         echo "🔨 Generating HTML documentation from SQL files..."
         cd scripts
-        python3 generate_html.py
+        python3 validate_schema_generate_html.py
         cd ..
     
     # Commit and push generated documentation
